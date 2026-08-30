@@ -190,6 +190,33 @@ and deterministic observation, request, trace, receipt, redaction, and expiry co
 | Semantic live proposals         | `ReducePosition`    |
 | NautilusTrader package coupling | None                |
 
+## Engineering standards
+
+[`nautilus_engineering`](https://github.com/nautechsystems/nautilus_engineering) is the source of
+truth for shared engineering standards, tool pins, managed pre-commit definitions, and vendored
+scripts. [`.nautilus-engineering.lock`](.nautilus-engineering.lock) records the adopted revision,
+selected profiles, target paths, and file hashes.
+
+Do not edit a managed file or its lock hash directly. A root `tools.toml`, if needed, is reserved
+for tools unique to this repository; shared tool pins remain in
+`.nautilus-engineering/tools.toml`. Local policy stays in `Cargo.toml`, `security-audit.toml`, the
+`Makefile`, and pre-commit entries outside the managed markers.
+
+To adopt a reviewed upstream revision, run the update from that exact `nautilus_engineering`
+checkout, then render and verify the consumer files:
+
+```bash
+consumer_repo=/path/to/nautilus_agents
+sync/sync.bash update --consumer "$consumer_repo"
+cd "$consumer_repo"
+python3 scripts/manage-nautilus-engineering-pre-commit.py render
+make check-shared
+```
+
+See the upstream
+[consumer adoption guide](https://github.com/nautechsystems/nautilus_engineering/blob/main/docs/consumer-adoption.md)
+for selection changes and target overrides.
+
 ## Security
 
 See [SECURITY.md](SECURITY.md) to report a vulnerability privately.

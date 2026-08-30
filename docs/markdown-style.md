@@ -2,10 +2,9 @@
 
 Standard revision: 1
 
-This document defines the shared Markdown baseline for AgentSkills and repositories that adopt a
-local copy. The maintained source is `references/markdown-style.md` in the AgentSkills repository.
-Keep repository copies byte-for-byte identical and put repository-specific additions in a separate
-local guide.
+This document defines a shared Markdown baseline for repositories that adopt a local copy. Keep
+copies byte-for-byte identical to the maintained source and put repository-specific additions in a
+separate local guide.
 
 ## Language and extensions
 
@@ -182,9 +181,9 @@ Use three hyphens:
 - End each file with one newline.
 - Do not leave trailing whitespace.
 
-## Agent guidance
+## Editing guidance
 
-When generating or modifying Markdown:
+When creating or modifying Markdown:
 
 - For narrow edits, preserve surrounding style and use markdownlint without loading the full guide
   unless both leave a concrete question unanswered.

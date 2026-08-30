@@ -1,0 +1,17 @@
+version = 1
+
+[[cargo.audit]]
+lockfile = "Cargo.lock"
+
+[[cargo.deny]]
+manifest = "Cargo.toml"
+config = "deny.toml"
+all-features = true
+checks = ["advisories", "licenses", "sources", "bans"]
+
+[[cargo.vet]]
+manifest = "Cargo.toml"
+store = "supply-chain"
+
+[osv]
+lockfiles = ["Cargo.lock"]

@@ -26,6 +26,15 @@ include = [
 members = ["tools/contract-schema"]
 resolver = "2"
 
+# Minimum age before a crates.io version may enter Cargo.lock. Enforced by
+# scripts/check-cargo-cooldown.sh.
+[workspace.metadata.cooldown]
+days = 3
+
+# Crate versions accepted inside the cooldown window. Each entry requires a
+# cargo-vet audit in supply-chain/audits.toml covering that exact version.
+[workspace.metadata.cooldown.allow]
+
 [lib]
 name = "nautilus_agents"
 

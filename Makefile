@@ -12,6 +12,9 @@ CYAN   := \033[0;36m
 GRAY   := \033[0;37m
 RESET  := \033[0m
 
+PREK_VERSION := $(shell bash scripts/tool-version.sh prek)
+CARGO_EDIT_VERSION := $(shell bash scripts/cargo-tool-version.sh cargo-edit)
+
 .DEFAULT_GOAL := help
 
 #== Build
@@ -39,11 +42,17 @@ format:  #-- Format Rust code (nightly rustfmt)
 	cargo +nightly fmt --all
 
 .PHONY: pre-commit
-pre-commit:  #-- Run all pre-commit hooks on all files
+pre-commit: check-prek-installed  #-- Run all pre-commit hooks on all files
 	prek run --all-files
+
+.PHONY: check-shared
+check-shared:  #-- Check vendored Nautilus Engineering files
+	bash scripts/check-nautilus-engineering-sync.bash
+	python3 scripts/manage-nautilus-engineering-pre-commit.py check
 
 .PHONY: pre-flight
 pre-flight:  #-- Run pre-commit hooks, Rust tests, and supply-chain checks
+	@$(MAKE) --no-print-directory check-shared
 	@$(MAKE) --no-print-directory pre-commit
 	@$(MAKE) --no-print-directory cargo-test
 	@$(MAKE) --no-print-directory security-audit
@@ -105,26 +114,26 @@ outdated: check-edit-installed  #-- Check for outdated dependencies
 
 .PHONY: update
 update:  #-- Update Rust dependencies
-	cargo update
+	bash scripts/update-cargo-dependencies.bash
+
+.PHONY: cargo-cooldown
+cargo-cooldown:  #-- Check new Cargo dependencies against the release cooldown
+	bash scripts/check-cargo-cooldown.sh
 
 #== Security
 
-# Run an audit step quietly and display its captured output only on failure
-define audit_step
-	printf "$(CYAN)Running $(1)...$(RESET) "; \
-	if _out=$$($(2) 2>&1); then \
-		printf "$(GREEN)ok$(RESET)\n"; \
-	else \
-		rc=$$?; printf "$(RED)failed$(RESET)\n%s\n" "$$_out"; exit $$rc; \
-	fi
-endef
+.PHONY: install-security-tools
+install-security-tools:  #-- Install the shared supply-chain tools
+	bash scripts/install-security-tools.sh
+
+.PHONY: check-security-tools
+check-security-tools:  #-- Check shared supply-chain tool versions
+	python3 scripts/security-audit.py check-tools
 
 .PHONY: security-audit
-security-audit: check-audit-installed check-deny-installed check-vet-installed  #-- Run full security audit
+security-audit:  #-- Run the configured supply-chain audits
 	$(info $(M) Running security audit...)
-	@$(call audit_step,cargo audit,cargo audit --color never)
-	@$(call audit_step,cargo deny,cargo deny --all-features check advisories licenses sources bans)
-	@$(call audit_step,cargo vet,cargo vet --locked)
+	@python3 scripts/security-audit.py run
 
 .PHONY: cargo-deny
 cargo-deny: check-deny-installed  #-- Run cargo-deny checks
@@ -133,13 +142,6 @@ cargo-deny: check-deny-installed  #-- Run cargo-deny checks
 .PHONY: cargo-vet
 cargo-vet: check-vet-installed  #-- Run cargo-vet supply chain audit
 	cargo vet
-
-.PHONY: check-audit-installed
-check-audit-installed:
-	@if ! cargo audit --version >/dev/null 2>&1; then \
-		echo "cargo-audit is not installed. Install with 'cargo install cargo-audit'"; \
-		exit 1; \
-	fi
 
 .PHONY: check-deny-installed
 check-deny-installed:
@@ -150,8 +152,17 @@ check-deny-installed:
 
 .PHONY: check-edit-installed
 check-edit-installed:
-	@if ! cargo upgrade --version >/dev/null 2>&1; then \
-		echo "cargo-edit is not installed. Install with 'cargo install cargo-edit'"; \
+	@version=$$(cargo upgrade --version 2>/dev/null | awk '{ print $$2 }'); \
+	if [ "$$version" != "$(CARGO_EDIT_VERSION)" ]; then \
+		echo "cargo-edit $(CARGO_EDIT_VERSION) is required; found $${version:-not installed}"; \
+		exit 1; \
+	fi
+
+.PHONY: check-prek-installed
+check-prek-installed:
+	@version=$$(prek --version 2>/dev/null | awk '{ print $$2 }'); \
+	if [ "$$version" != "$(PREK_VERSION)" ]; then \
+		echo "prek $(PREK_VERSION) is required; found $${version:-not installed}"; \
 		exit 1; \
 	fi
 

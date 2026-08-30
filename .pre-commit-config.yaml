@@ -1,5 +1,22 @@
 ---
 repos:
+  # nautilus-engineering: sync begin
+  - repo: local
+    hooks:
+      - id: check-nautilus-engineering-sync
+        name: check Nautilus engineering sync
+        entry: bash scripts/check-nautilus-engineering-sync.bash --staged
+        language: system
+        pass_filenames: false
+        always_run: true
+      - id: check-nautilus-engineering-pre-commit
+        name: check Nautilus engineering pre-commit section
+        entry: python3 scripts/manage-nautilus-engineering-pre-commit.py check --staged
+        language: system
+        pass_filenames: false
+        always_run: true
+  # nautilus-engineering: sync end
+
   # General checks
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v6.0.0
@@ -27,28 +44,6 @@ repos:
     rev: v0.19.1
     hooks:
       - id: gitlint
-
-  - repo: https://github.com/scop/pre-commit-shfmt
-    rev: v3.13.0-1
-    hooks:
-      - id: shfmt
-        args: ["-i", "2", "-ci", "-sr", "-ln", "bash", "-w"]
-
-  - repo: https://github.com/shellcheck-py/shellcheck-py
-    rev: v0.11.0.1
-    hooks:
-      - id: shellcheck
-
-  - repo: https://github.com/adrienverge/yamllint
-    rev: v1.38.0
-    hooks:
-      - id: yamllint
-        args: [--strict]
-
-  - repo: https://github.com/ComPWA/taplo-pre-commit
-    rev: v0.9.3
-    hooks:
-      - id: taplo-format
 
   - repo: https://github.com/hadolint/hadolint
     rev: v2.14.0
@@ -198,6 +193,14 @@ repos:
         files: 'Cargo\.toml$'
         pass_filenames: false
 
+      - id: cargo-cooldown
+        name: cargo cooldown
+        description: Blocks crate versions published inside the cooldown window
+        entry: bash scripts/check-cargo-cooldown.sh --lock Cargo.lock
+        language: system
+        files: 'Cargo\.(lock|toml)$|scripts/check-cargo-cooldown\.sh'
+        pass_filenames: false
+
       - id: fmt
         name: cargo fmt
         description: Format files with cargo +nightly fmt
@@ -222,9 +225,9 @@ repos:
         types: [file]
         pass_filenames: false
 
-  # Markdown formatting and linting
+  # nautilus-engineering: hooks begin
   - repo: https://github.com/DavidAnson/markdownlint-cli2
-    rev: v0.23.1
+    rev: v0.23.2
     hooks:
       - id: markdownlint-cli2
         name: markdownlint
@@ -243,3 +246,26 @@ repos:
         entry: python3 -B scripts/check-markdown-tables.py
         language: system
         types: [markdown]
+
+  - repo: https://github.com/scop/pre-commit-shfmt
+    rev: v3.13.1-1
+    hooks:
+      - id: shfmt
+        args: ["-i", "2", "-ci", "-sr", "-ln", "bash", "-w"]
+
+  - repo: https://github.com/shellcheck-py/shellcheck-py
+    rev: v0.11.0.1-1
+    hooks:
+      - id: shellcheck
+
+  - repo: https://github.com/ComPWA/taplo-pre-commit
+    rev: v0.9.3
+    hooks:
+      - id: taplo-format
+
+  - repo: https://github.com/adrienverge/yamllint
+    rev: v1.38.0
+    hooks:
+      - id: yamllint
+        args: [--strict]
+  # nautilus-engineering: hooks end

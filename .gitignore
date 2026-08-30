@@ -47,6 +47,9 @@ dist/
 *.bak
 *tmp/
 *temp/
+.nautilus-engineering.syncing
+.nautilus-engineering.sync-lock
+.nautilus-engineering.tmp.*
 
 # OS
 .DS_Store
