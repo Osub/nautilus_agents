@@ -12,7 +12,7 @@ use nautilus_agents::{
         live::LiveProposalRequest,
         observation::Observation,
         receipt::{CorrelationRefs, DecisionReceipt, DecisionStatus, ProposalResponse},
-        value::{ContentDigest, TimestampNs},
+        value::TimestampNs,
         version::PROTOCOL_VERSION,
     },
     testing,
@@ -20,7 +20,6 @@ use nautilus_agents::{
 use schemars::JsonSchema;
 use serde::Serialize;
 use serde_json::Value;
-use sha2::{Digest, Sha256};
 
 const CONTRACT_DIR: &str = "contract/v1";
 const GENERATOR_VERSION: &str = env!("CARGO_PKG_VERSION");
@@ -42,7 +41,7 @@ struct Manifest {
 #[derive(Serialize)]
 struct ManifestAsset {
     kind: &'static str,
-    root_type: String,
+    root_type: &'static str,
     path: String,
     byte_length: usize,
     sha256: String,
@@ -53,7 +52,7 @@ struct ManifestAsset {
 
 #[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord)]
 struct Field {
-    root_type: String,
+    root_type: &'static str,
     container: String,
     name: String,
     required: bool,
@@ -462,7 +461,12 @@ fn fields_bytes(schemas: &[Asset]) -> Result<Vec<u8>, String> {
     Ok(output.into_bytes())
 }
 
-fn collect_fields(root_type: &str, container: &str, value: &Value, fields: &mut BTreeSet<Field>) {
+fn collect_fields(
+    root_type: &'static str,
+    container: &str,
+    value: &Value,
+    fields: &mut BTreeSet<Field>,
+) {
     match value {
         Value::Object(object) => {
             let container = object
@@ -479,7 +483,7 @@ fn collect_fields(root_type: &str, container: &str, value: &Value, fields: &mut 
             if let Some(properties) = object.get("properties").and_then(Value::as_object) {
                 for (name, schema) in properties {
                     fields.insert(Field {
-                        root_type: root_type.to_string(),
+                        root_type,
                         container: container.to_string(),
                         name: name.clone(),
                         required: required.contains(name.as_str()),
@@ -508,7 +512,7 @@ fn collect_fields(root_type: &str, container: &str, value: &Value, fields: &mut 
 }
 
 fn field_owner(field: &Field) -> &'static str {
-    match field.root_type.as_str() {
+    match field.root_type {
         "Observation" | "DecisionReceipt" | "ProposalResponse" => "nautilus_trader",
         "LiveProposalRequest" => "caller",
         "AgentTrace" => "agent",
@@ -517,7 +521,7 @@ fn field_owner(field: &Field) -> &'static str {
 }
 
 fn field_retention(field: &Field) -> &'static str {
-    match field.root_type.as_str() {
+    match field.root_type {
         "Observation" => "declared_by_observation",
         "AgentTrace" => "agent_trace",
         _ => "reference_only",
@@ -525,7 +529,7 @@ fn field_retention(field: &Field) -> &'static str {
 }
 
 fn field_digest_covered(field: &Field) -> bool {
-    match field.root_type.as_str() {
+    match field.root_type {
         "Observation" => !(field.container == "Observation" && field.name == "digest"),
         "LiveProposalRequest" | "AgentTrace" => true,
         _ => false,
@@ -580,10 +584,10 @@ fn manifest_asset(
 ) -> ManifestAsset {
     ManifestAsset {
         kind,
-        root_type: asset.root_type.to_string(),
+        root_type: asset.root_type,
         path: asset.path.clone(),
         byte_length: asset.bytes.len(),
-        sha256: digest_bytes(&asset.bytes),
+        sha256: canonical::sha256_bytes(&asset.bytes).to_string(),
         expectation,
         expected_error,
     }
@@ -689,8 +693,4 @@ where
     T::Err: std::fmt::Display,
 {
     value.parse::<T>().map_err(|error| error.to_string())
-}
-
-fn digest_bytes(bytes: &[u8]) -> String {
-    ContentDigest::new(Sha256::digest(bytes).into()).to_string()
 }

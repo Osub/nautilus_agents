@@ -13,13 +13,12 @@ use nautilus_agents::{
         live::LiveProposalRequest,
         observation::{Observation, ObservationError},
         receipt::{DecisionReceipt, ProposalResponse},
-        value::{ContentDigest, InstrumentId, PositionId, Quantity, TimestampNs, ValueError},
+        value::{InstrumentId, PositionId, Quantity, TimestampNs, ValueError},
         version::ProtocolInfo,
     },
 };
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
-use sha2::{Digest, Sha256};
 
 #[derive(Deserialize, Serialize)]
 struct Manifest {
@@ -133,7 +132,12 @@ fn test_manifest_matches_every_embedded_asset() {
             fixture.bytes
         };
         assert_eq!(bytes.len(), asset.byte_length, "asset: {}", asset.path);
-        assert_eq!(digest(bytes), asset.sha256, "asset: {}", asset.path);
+        assert_eq!(
+            canonical::sha256_bytes(bytes).to_string(),
+            asset.sha256,
+            "asset: {}",
+            asset.path
+        );
     }
 }
 
@@ -467,8 +471,4 @@ fn display_path(path: &[PathSegment]) -> String {
         }
     }
     value
-}
-
-fn digest(bytes: &[u8]) -> String {
-    ContentDigest::new(Sha256::digest(bytes).into()).to_string()
 }

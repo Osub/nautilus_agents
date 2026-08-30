@@ -10,4 +10,3 @@ nautilus-agents = { path = "../..", features = ["testkit"] }
 schemars = "=1.2.1"
 serde = { version = "1.0.229", features = ["derive"] }
 serde_json = "1.0.151"
-sha2 = "0.11.0"

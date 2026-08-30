@@ -172,11 +172,6 @@ impl Quantity {
         &self.0
     }
 
-    pub(crate) fn compare(&self, other: &Self) -> Ordering {
-        let scale = self.scale().max(other.scale());
-        decimal_digits(self.as_str(), scale).cmp_decimal(&decimal_digits(other.as_str(), scale))
-    }
-
     pub(crate) fn is_multiple_of(&self, increment: &Self) -> bool {
         let scale = self.scale().max(increment.scale());
         let value = decimal_digits(self.as_str(), scale);
@@ -225,7 +220,11 @@ impl PartialOrd for Quantity {
 
 impl Ord for Quantity {
     fn cmp(&self, other: &Self) -> Ordering {
-        self.compare(other)
+        let scale = self.scale().max(other.scale());
+        compare_decimal(
+            &decimal_digits(self.as_str(), scale),
+            &decimal_digits(other.as_str(), scale),
+        )
     }
 }
 
@@ -476,16 +475,10 @@ fn validate_quantity(value: &str) -> Result<(), ValueError> {
     Ok(())
 }
 
-trait DecimalOrder {
-    fn cmp_decimal(&self, other: &[u8]) -> Ordering;
-}
-
-impl DecimalOrder for [u8] {
-    fn cmp_decimal(&self, other: &[u8]) -> Ordering {
-        let left = trim_zeroes(self);
-        let right = trim_zeroes(other);
-        left.len().cmp(&right.len()).then_with(|| left.cmp(right))
-    }
+fn compare_decimal(left: &[u8], right: &[u8]) -> Ordering {
+    let left = trim_zeroes(left);
+    let right = trim_zeroes(right);
+    left.len().cmp(&right.len()).then_with(|| left.cmp(right))
 }
 
 fn decimal_digits(value: &str, scale: usize) -> Vec<u8> {
@@ -502,7 +495,7 @@ fn decimal_remainder(value: Vec<u8>, divisor: &[u8]) -> Vec<u8> {
     for digit in value {
         remainder.push(digit);
         remainder = trim_zeroes(&remainder).to_vec();
-        while remainder.as_slice().cmp_decimal(divisor) != Ordering::Less {
+        while compare_decimal(&remainder, divisor) != Ordering::Less {
             subtract_decimal(&mut remainder, divisor);
         }
     }
