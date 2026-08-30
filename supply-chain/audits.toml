@@ -1,4 +1,134 @@
 
 # cargo-vet audits file
 
-[audits]
+[[audits.aho-corasick]]
+who = "Nautech Systems <info@nautechsystems.io>"
+criteria = "safe-to-run"
+delta = "1.1.4 -> 1.1.5"
+notes = "Span offset arithmetic now uses checked_add; Match offset reuses Span::offset. No unsafe change."
+
+[[audits.cpufeatures]]
+who = "Nautech Systems <info@nautechsystems.io>"
+criteria = "safe-to-deploy"
+delta = "0.3.0 -> 0.3.1"
+notes = "u8::MAX rename, miri target-feature cfg, and AVX OSXSAVE register class xmm->ymm. Unsafe count unchanged."
+
+[[audits.futures-core]]
+who = "Nautech Systems <info@nautechsystems.io>"
+criteria = "safe-to-deploy"
+delta = "0.3.33 -> 0.3.34"
+notes = "Version bump only; no source changes."
+
+[[audits.futures-macro]]
+who = "Nautech Systems <info@nautechsystems.io>"
+criteria = "safe-to-deploy"
+delta = "0.3.33 -> 0.3.34"
+notes = "Depends on syn 3 instead of syn 2. No source or unsafe changes."
+
+[[audits.futures-task]]
+who = "Nautech Systems <info@nautechsystems.io>"
+criteria = "safe-to-deploy"
+delta = "0.3.33 -> 0.3.34"
+notes = "Marks noop_clone #[inline(always)] so cloned noop wakers keep vtable identity. Unsafe body unchanged."
+
+[[audits.futures-util]]
+who = "Nautech Systems <info@nautechsystems.io>"
+criteria = "safe-to-deploy"
+delta = "0.3.33 -> 0.3.34"
+notes = "Marks waker clone vtable entries #[inline(always)] to preserve cloned waker identity. Miri skips in 0.1 compat doctests. Unsafe bodies unchanged."
+
+[[audits.hybrid-array]]
+who = "Nautech Systems <info@nautechsystems.io>"
+criteria = "safe-to-deploy"
+delta = "0.4.13 -> 0.4.14"
+notes = "Adds Streamlined NTRU Prime typenum size aliases. No unsafe, network, or build-script changes."
+
+[[audits.js-sys]]
+who = "Nautech Systems <info@nautechsystems.io>"
+criteria = "safe-to-deploy"
+delta = "0.3.103 -> 0.3.104"
+notes = "Wasm task run() drop guard avoids leaking on panic or JS exception; JsNullable upcast impls. Unsafe count unchanged."
+
+[[audits.ref-cast]]
+who = "Nautech Systems <info@nautechsystems.io>"
+criteria = "safe-to-deploy"
+delta = "1.0.26 -> 1.0.27"
+notes = "Docs URL and clippy deny in tests. No runtime or unsafe changes."
+
+[[audits.ref-cast-impl]]
+who = "Nautech Systems <info@nautechsystems.io>"
+criteria = "safe-to-deploy"
+delta = "1.0.26 -> 1.0.27"
+notes = "Allows clippy::let_underscore_must_use on generated lifetime check. Unsafe count unchanged."
+
+[[audits.regex-automata]]
+who = "Nautech Systems <info@nautechsystems.io>"
+criteria = "safe-to-run"
+delta = "0.4.16 -> 0.4.18"
+notes = "Configurable Cache pool capacity; std default uses available_parallelism. Existing pool mutex/stack logic unchanged in kind. No new unsafe."
+
+[[audits.syn]]
+who = "Nautech Systems <info@nautechsystems.io>"
+criteria = "safe-to-deploy"
+delta = "3.0.3 -> 3.0.4"
+notes = "ForeignItemFn parsing accepts safe fn signatures. Remaining edits are rustc_ast test-harness updates. Unsafe count unchanged."
+
+[[audits.thiserror]]
+who = "Nautech Systems <info@nautechsystems.io>"
+criteria = "safe-to-deploy"
+delta = "2.0.19 -> 2.0.20"
+notes = "Docs URL bump only. No unsafe code."
+
+[[audits.thiserror-impl]]
+who = "Nautech Systems <info@nautechsystems.io>"
+criteria = "safe-to-deploy"
+delta = "2.0.19 -> 2.0.20"
+notes = "Allows clippy::redundant_field_names in generated From impls. Unsafe count unchanged."
+
+[[audits.toml_parser]]
+who = "Nautech Systems <info@nautechsystems.io>"
+criteria = "safe-to-run"
+delta = "1.1.2+spec-1.1.0 -> 1.1.3+spec-1.1.0"
+notes = "Lexer into_vec capacity uses div_ceil(4) instead of min(len, usize::MAX/size). No unsafe change."
+
+[[audits.uuid]]
+who = "Nautech Systems <info@nautechsystems.io>"
+criteria = "safe-to-deploy"
+delta = "1.24.0 -> 1.26.0"
+notes = "Adds serde::bytes and ContextV7::with_additional_precision_bits; parse diagnostics use char instead of u8. No unsafe, filesystem, network, or build-script changes."
+
+[[audits.wasm-bindgen]]
+who = "Nautech Systems <info@nautechsystems.io>"
+criteria = "safe-to-deploy"
+delta = "0.2.126 -> 0.2.127"
+notes = "JsNullable upcast impls and an Emscripten marker section. Unsafe count unchanged."
+
+[[audits.wasm-bindgen-macro]]
+who = "Nautech Systems <info@nautechsystems.io>"
+criteria = "safe-to-deploy"
+delta = "0.2.126 -> 0.2.127"
+notes = "Version bump only; no source changes."
+
+[[audits.wasm-bindgen-macro-support]]
+who = "Nautech Systems <info@nautechsystems.io>"
+criteria = "safe-to-deploy"
+delta = "0.2.126 -> 0.2.127"
+notes = "Generated upcasts include JsNullable; transmute_copy paths qualify core through wasm_bindgen::__rt. Unsafe count unchanged."
+
+[[audits.wasm-bindgen-shared]]
+who = "Nautech Systems <info@nautechsystems.io>"
+criteria = "safe-to-deploy"
+delta = "0.2.126 -> 0.2.127"
+notes = "Version bump only; no source changes."
+
+[[audits.zerocopy]]
+who = "Nautech Systems <info@nautechsystems.io>"
+criteria = "safe-to-run"
+delta = "0.8.55 -> 0.8.56"
+notes = "Stops pulling alloc under kani cfg. Unsafe count unchanged."
+
+[[audits.zerocopy-derive]]
+who = "Nautech Systems <info@nautechsystems.io>"
+criteria = "safe-to-run"
+delta = "0.8.55 -> 0.8.56"
+notes = "zerocopy(crate = ...) accepts module paths with validation. Test hygiene coverage expanded. No new unsafe."

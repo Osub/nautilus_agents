@@ -45,14 +45,14 @@ testkit = []
 
 [dependencies]
 futures-timer = "3.0.4"
-futures-util = "0.3.33"
+futures-util = "0.3.34"
 schemars = "1.2.1"
 serde = { version = "1.0.229", features = ["derive"] }
 serde_json = "1.0.151"
 serde_json_canonicalizer = "=0.3.2"
 sha2 = "0.11.0"
-thiserror = "2.0.19"
-uuid = { version = "1.24.0", features = ["v4"] }
+thiserror = "2.0.20"
+uuid = { version = "1.26.0", features = ["v4"] }
 
 [dev-dependencies]
 pollster = "1.0.1"

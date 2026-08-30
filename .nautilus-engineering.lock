@@ -1,6 +1,6 @@
 version = 1
 repository = "https://github.com/nautechsystems/nautilus_engineering"
-revision = "a36bd700eeb7f0d56c547473f1f98b5ef1353cb9"
+revision = "16a79de4c394f53b45eff5caef0bb00eeb44c43a"
 manifest_sha256 = "9c13fc0ece7cc0179fc74a454ec1f9d171195aab4d0b285228261e679209c633"
 marker_file = ".nautilus-engineering.syncing"
 profiles = ["cargo", "markdown", "pre-commit", "security", "shell"]
@@ -32,7 +32,7 @@ executable = false
 [[file]]
 artifact = "pre-commit-toml"
 path = ".nautilus-engineering/pre-commit/toml.yaml"
-sha256 = "5cb5e9d442d2d5f286342de0df5c4ebe22309f696c3b6607217344ef344eb4d0"
+sha256 = "41cfb8b4a4d14880cdfc265dc031e637fcccf927daa988663d699707b0b95bdd"
 executable = false
 
 [[file]]
@@ -44,7 +44,7 @@ executable = false
 [[file]]
 artifact = "shared-tool-catalog"
 path = ".nautilus-engineering/tools.toml"
-sha256 = "f967ebbbc6a97e4ac2b3c6fe3fd4fb3e98972179771706871aab8e3dabbb009c"
+sha256 = "ecc6cf5f8a4f5814681f2056c563b3c6c50f6f8535546a54f0160f870256fee4"
 executable = false
 
 [[file]]
@@ -134,7 +134,7 @@ executable = false
 [[file]]
 artifact = "tool-version"
 path = "scripts/tool-version.sh"
-sha256 = "f927cd95160b8f2b1aea74e379e62237bba806845731499900befba81f319868"
+sha256 = "59a89bc4078276a995a77cefb97b98a110d301ff815cb165723924ca3484f323"
 executable = true
 
 [[file]]

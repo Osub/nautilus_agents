@@ -46,14 +46,14 @@ repos:
       - id: gitlint
 
   - repo: https://github.com/hadolint/hadolint
-    rev: v2.14.0
+    rev: v2.15.1
     hooks:
       - id: hadolint-docker
         name: dockerfile-lint
         description: Lint Dockerfiles for best practices and errors
 
   - repo: https://github.com/crate-ci/typos
-    rev: v1.45.0
+    rev: v1.49.0
     hooks:
       - id: typos
         description: Checks for common typos
@@ -61,7 +61,7 @@ repos:
         types_or: [rust, toml, yaml, markdown, javascript]
 
   - repo: https://github.com/codespell-project/codespell
-    rev: v2.4.2
+    rev: v2.4.3
     hooks:
       - id: codespell
         description: Checks for common misspellings
@@ -84,7 +84,7 @@ repos:
         description: Checks GitHub Actions workflow syntax
 
   - repo: https://github.com/zizmorcore/zizmor-pre-commit
-    rev: v1.23.1
+    rev: v1.29.0
     hooks:
       - id: zizmor
         name: zizmor (security)
@@ -258,10 +258,15 @@ repos:
     hooks:
       - id: shellcheck
 
-  - repo: https://github.com/ComPWA/taplo-pre-commit
-    rev: v0.9.3
+  - repo: local
     hooks:
       - id: taplo-format
+        name: taplo-format
+        entry: taplo format
+        language: rust
+        types: [toml]
+        additional_dependencies:
+          - cli:taplo-cli:0.10.0
 
   - repo: https://github.com/adrienverge/yamllint
     rev: v1.38.0
