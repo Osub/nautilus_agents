@@ -22,7 +22,7 @@ pub struct Schema {
 /// Declares whether a fixture must pass or fail consumer validation.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum FixtureExpectation {
-    /// The fixture is a valid canonical public value.
+    /// The fixture must deserialize and pass its public consumer validation boundary.
     Valid,
     /// The fixture must be rejected.
     Invalid,
@@ -64,7 +64,9 @@ pub const fn schemas() -> &'static [Schema] {
     SCHEMAS
 }
 
-/// Returns every published valid and invalid fixture in stable path order.
+/// Returns fixtures grouped by source directory and sorted by name within each group.
+///
+/// Fixtures under `fixtures/valid` precede those under `fixtures/invalid`.
 #[must_use]
 pub const fn fixtures() -> &'static [Fixture] {
     FIXTURES

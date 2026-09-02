@@ -109,6 +109,12 @@ pub struct Observation {
 
 impl Observation {
     /// Validates structural invariants and the content digest.
+    ///
+    /// # Errors
+    ///
+    /// Returns an error when the protocol version is unsupported, timestamps or grant scope are
+    /// inconsistent, live views are duplicated or lack required capabilities, canonical digest
+    /// calculation fails, or the stored digest does not match the observation.
     pub fn validate(&self) -> Result<(), ObservationError> {
         if !self.version.is_supported() {
             return Err(ObservationError::UnsupportedVersion {
@@ -135,6 +141,11 @@ impl Observation {
     }
 
     /// Validates the observation and checks it against an evaluation time.
+    ///
+    /// # Errors
+    ///
+    /// Returns any error reported by [`Self::validate`], or [`ObservationError::Expired`] when
+    /// `now` is later than the observation expiry.
     pub fn validate_at(&self, now: TimestampNs) -> Result<(), ObservationError> {
         self.validate()?;
 
@@ -147,6 +158,10 @@ impl Observation {
     }
 
     /// Computes the canonical digest excluding the `digest` field itself.
+    ///
+    /// # Errors
+    ///
+    /// Returns [`ObservationError::Canonicalization`] when canonical serialization fails.
     pub fn computed_digest(&self) -> Result<ContentDigest, ObservationError> {
         canonical::sha256(&ObservationDigest {
             version: self.version,
@@ -165,12 +180,19 @@ impl Observation {
     }
 
     /// Recomputes the content digest after local synthetic-data changes.
+    ///
+    /// # Errors
+    ///
+    /// Returns [`ObservationError::Canonicalization`] when canonical serialization fails.
     pub fn refresh_digest(&mut self) -> Result<(), ObservationError> {
         self.digest = self.computed_digest()?;
         Ok(())
     }
 
-    /// Returns the stable reference carried by traces and requests.
+    /// Returns a reference from the stored observation identity and digest.
+    ///
+    /// This method does not recompute or validate the digest. After mutating an observation, call
+    /// [`Self::refresh_digest`] and [`Self::validate`] before creating a reference.
     #[must_use]
     pub fn reference(&self) -> ObservationRef {
         ObservationRef {

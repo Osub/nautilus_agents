@@ -17,7 +17,8 @@ The SDK provides:
 
 - Protocol-native identity, quantity, timestamp, digest, capability, observation, proposal, error, and receipt types.
 - One semantic live proposal: `ReducePosition`.
-- Runtime-neutral proposal policies with timeout and panic capture.
+- Runtime-neutral proposal policies with a cooperative timeout and unwinding-panic capture during
+  policy creation and polling.
 - Agent-side traces and retention-aware JSONL recording.
 - Advisory-only local checks and side-by-side policy evaluation.
 - A transport-neutral client trait.
@@ -62,6 +63,18 @@ LiveIntent::ReducePosition(ReducePosition {
 `ReducePosition` carries only a position, instrument, and quantity. NautilusTrader determines how
 to handle an accepted proposal.
 
+## Availability
+
+This README documents the unreleased `0.2.0` source tree. That version is not published on
+crates.io. To evaluate it from source, run:
+
+```bash
+git clone https://github.com/nautechsystems/nautilus_agents.git
+cd nautilus_agents
+```
+
+Published crate documentation remains available on [docs.rs](https://docs.rs/nautilus-agents).
+
 ## Authoring a policy
 
 Implement `ProposalPolicy` with explicit SDK imports:
@@ -81,8 +94,12 @@ impl ProposalPolicy for ObserveOnly {
 }
 ```
 
-`ProposalRunner` applies a runtime-neutral timeout, captures returned errors and panics, and emits
-exactly one `AgentTrace`. It does not call a client or produce a receipt.
+`ProposalRunner` races the policy future against a runtime-neutral timer. The timeout takes effect
+only when the policy future yields control, so it cannot preempt blocking work inside a future poll.
+Returned errors and unwinding panics raised while creating or polling the policy future become
+failure traces. A panic while dropping the future may escape, and an aborting panic terminates the
+process. Each completed run emits exactly one `AgentTrace`. It does not call a client or produce a
+receipt.
 
 See [the defensive policy example](examples/defensive_policy.rs) for a complete typed observation,
 policy evaluation, trace, and advisory report:
@@ -165,8 +182,9 @@ The crate has no broad prelude. Import the public values each policy uses.
 Rust DTOs are the source for the versioned assets under [`contract/v1`](contract/v1):
 
 - Draft 2020-12 JSON Schemas.
-- Canonical RFC 8785 valid fixtures.
-- Reviewed invalid fixtures with expected public errors.
+- Canonical RFC 8785 fixtures under `contract/v1/fixtures/valid`.
+- Reviewed consumer cases under `contract/v1/fixtures/invalid`, including a structurally valid
+  idempotency control and invalid fixtures with expected public errors.
 - `fields.toml` ownership, stability, required, retention, and digest metadata.
 - `manifest.json` byte lengths, SHA-256 hashes, root types, expectations, and aggregate digest.
 

@@ -100,6 +100,10 @@ impl ObservationBuilder {
     }
 
     /// Recomputes the digest and validates the complete observation.
+    ///
+    /// # Errors
+    ///
+    /// Returns an error when digest calculation or observation validation fails.
     pub fn build(mut self) -> Result<Observation, ObservationError> {
         self.observation.refresh_digest()?;
         self.observation.validate()?;

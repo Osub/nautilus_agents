@@ -1,9 +1,11 @@
 # Security Policy
 
-At NautilusTrader, we take security seriously and appreciate your efforts in helping us identify and fix
-any vulnerabilities. If you have discovered a security vulnerability, follow the guidelines outlined below.
+Report security vulnerabilities privately through the methods below.
 
-For our full security policies, see <https://nautilustrader.io/security/>.
+See the [NautilusTrader security policies](https://nautilustrader.io/security/) for the complete
+organization-wide policy set. The
+[Responsible Disclosure Policy](https://nautilustrader.io/security/responsible-disclosure/)
+provides the safe-harbor and privacy terms for reports covered here.
 
 ## Scope
 
@@ -52,8 +54,8 @@ prefer to remain anonymous.
 
 ## Supported versions
 
-We only support the latest version of nautilus-agents. If you are using an older version, it is possible
-that vulnerabilities may have been fixed in a later release.
+We support only the latest released version of `nautilus-agents`. Older releases may lack fixes
+available in a later release or in the repository.
 
 ## Bug bounty program
 
@@ -62,13 +64,15 @@ the security of our platform and will do our best to properly recognize and cred
 
 ## Security infrastructure
 
-nautilus-agents employs multiple layers of security to protect against supply chain attacks and vulnerabilities:
+`nautilus-agents` uses multiple controls against supply-chain attacks and vulnerabilities:
 
-- **Dependency auditing**: Automated security scanning via cargo-audit, cargo-deny, and cargo-vet.
+- **Dependency auditing**: `cargo-audit` scans advisories, `cargo-deny` enforces dependency policy,
+  and `cargo-vet` verifies supply-chain provenance.
 - **Pre-commit security**: Gitleaks credential screening, private key detection, and
   Unicode control character detection.
-- **License compliance**: Automated checks ensuring LGPL-3.0 compatibility.
+- **License compliance**: `cargo-deny` enforces the repository's dependency license policy.
 - **Source restrictions**: Rust packages sourced exclusively from crates.io; git dependencies and
   unknown registries are prohibited.
 
-For our full supply chain security policy, see <https://nautilustrader.io/security/supply-chain/>.
+See the [Dependency and Supply Chain Security
+Policy](https://nautilustrader.io/security/supply-chain/) for the organization-wide controls.

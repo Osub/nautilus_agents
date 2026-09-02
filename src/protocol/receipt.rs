@@ -71,6 +71,12 @@ pub struct DecisionReceipt {
 
 impl DecisionReceipt {
     /// Validates public receipt invariants.
+    ///
+    /// # Errors
+    ///
+    /// Returns an error when the protocol version is unsupported, the update time precedes the
+    /// creation time, the status carries the wrong error presence, or the error code is
+    /// incompatible with the status.
     pub fn validate(&self) -> Result<(), ReceiptError> {
         if !self.version.is_supported() {
             return Err(ReceiptError::UnsupportedVersion {

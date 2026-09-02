@@ -115,11 +115,21 @@ impl TraceRecorder {
     }
 
     /// Appends one complete agent trace record.
+    ///
+    /// # Errors
+    ///
+    /// Returns an error when JSON serialization or a filesystem operation fails.
     pub fn record_trace(&self, trace: &AgentTrace) -> Result<(), RecordingError> {
         self.record(&JsonlRecord::Trace { trace })
     }
 
     /// Appends one observation record using the configured capture mode.
+    ///
+    /// # Errors
+    ///
+    /// Returns an error when redacted capture lacks a redactor, redaction or validation fails, the
+    /// selected mode would retain restricted data, JSON serialization fails, or a filesystem
+    /// operation fails.
     pub fn record_observation(&self, observation: &Observation) -> Result<(), RecordingError> {
         match self.config.observation_capture {
             ObservationCapture::ReferenceOnly => self.record(&JsonlRecord::ObservationReference {

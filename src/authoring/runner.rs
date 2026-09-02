@@ -32,7 +32,9 @@ type TimeoutFactory = Box<dyn Fn(Duration) -> TimeoutFuture + Send + Sync>;
 pub struct RunnerConfig {
     /// The caller-defined policy identity recorded in every trace.
     pub policy: PolicyMetadata,
-    /// The maximum duration allowed for one local policy evaluation.
+    /// The cooperative timeout for one local policy evaluation.
+    ///
+    /// The timeout takes effect only when the policy future yields control.
     pub timeout: Duration,
 }
 
@@ -54,7 +56,11 @@ impl<P: ProposalPolicy> ProposalRunner<P> {
         }
     }
 
-    /// Evaluates the policy and always returns exactly one agent-side trace.
+    /// Evaluates the policy and returns one agent-side trace when evaluation completes.
+    ///
+    /// The timeout cannot preempt blocking work inside a future poll. Unwinding panics raised while
+    /// creating or polling the policy future become failure outcomes. A panic while dropping the
+    /// future may escape, and aborting panics terminate the process.
     pub async fn run(&self, observation: &Observation) -> AgentTrace {
         let trace_id = (self.runtime.trace_id)();
         let started_at = (self.runtime.clock)();
