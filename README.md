@@ -185,7 +185,7 @@ and deterministic observation, request, trace, receipt, redaction, and expiry co
 | Surface                         | Current support     |
 | ------------------------------- | ------------------- |
 | Crate version                   | `0.2.0` early alpha |
-| Minimum Rust version            | `1.97.1`            |
+| Minimum Rust version            | `1.98.0`            |
 | Protocol version                | `1.0`               |
 | Semantic live proposals         | `ReducePosition`    |
 | NautilusTrader package coupling | None                |
