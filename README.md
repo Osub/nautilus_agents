@@ -1,6 +1,6 @@
 # Nautilus Agents SDK
 
-[![License](https://img.shields.io/badge/license-LGPL--3.0--or--later-blue.svg)](LICENSE)
+[![License](https://img.shields.io/badge/license-LGPL--3.0--only-blue.svg)](LICENSE)
 ![Status](https://img.shields.io/badge/status-early%20alpha-orange)
 
 Nautilus Agents is the public SDK for authoring and assuring agent policies that propose narrow,
@@ -223,4 +223,4 @@ See [SECURITY.md](SECURITY.md) to report a vulnerability privately.
 
 ## License
 
-This project is licensed under the GNU Lesser General Public License v3.0 or later. See [LICENSE](LICENSE).
+This project is licensed under the GNU Lesser General Public License v3.0 only. See [LICENSE](LICENSE).

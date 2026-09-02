@@ -43,6 +43,12 @@ criteria = "safe-to-deploy"
 delta = "0.4.13 -> 0.4.14"
 notes = "Adds Streamlined NTRU Prime typenum size aliases. No unsafe, network, or build-script changes."
 
+[[audits.indexmap]]
+who = "Nautech Systems <info@nautechsystems.io>"
+criteria = "safe-to-run"
+delta = "2.14.0 -> 2.14.1"
+notes = "Refactors index checks and disjoint mutable access. Bounds and duplicate checks still precede pointer dereferences. No network or build-script changes."
+
 [[audits.js-sys]]
 who = "Nautech Systems <info@nautechsystems.io>"
 criteria = "safe-to-deploy"
