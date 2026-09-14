@@ -7,6 +7,12 @@ criteria = "safe-to-run"
 delta = "1.1.4 -> 1.1.5"
 notes = "Span offset arithmetic now uses checked_add; Match offset reuses Span::offset. No unsafe change."
 
+[[audits.bitflags]]
+who = "Nautech Systems <info@nautechsystems.io>"
+criteria = "safe-to-run"
+delta = "2.13.1 -> 2.13.2"
+notes = "Moves const declarations outside the nested const block to avoid a rustc ICE; manual-impl example ordering fix. No unsafe changes."
+
 [[audits.cpufeatures]]
 who = "Nautech Systems <info@nautechsystems.io>"
 criteria = "safe-to-deploy"
@@ -43,17 +49,35 @@ criteria = "safe-to-deploy"
 delta = "0.4.13 -> 0.4.14"
 notes = "Adds Streamlined NTRU Prime typenum size aliases. No unsafe, network, or build-script changes."
 
+[[audits.hybrid-array]]
+who = "Nautech Systems <info@nautechsystems.io>"
+criteria = "safe-to-deploy"
+delta = "0.4.14 -> 0.4.15"
+notes = "Adds U513 ArraySize alias. No unsafe, network, or build-script changes."
+
 [[audits.indexmap]]
 who = "Nautech Systems <info@nautechsystems.io>"
 criteria = "safe-to-run"
 delta = "2.14.0 -> 2.14.1"
 notes = "Refactors index checks and disjoint mutable access. Bounds and duplicate checks still precede pointer dereferences. No network or build-script changes."
 
+[[audits.indexmap]]
+who = "Nautech Systems <info@nautechsystems.io>"
+criteria = "safe-to-run"
+delta = "2.14.1 -> 2.14.2"
+notes = "Fixes macro item hygiene so an internal const CAP cannot shadow caller names; empty map macros now support const initialization. No unsafe changes."
+
 [[audits.js-sys]]
 who = "Nautech Systems <info@nautechsystems.io>"
 criteria = "safe-to-deploy"
 delta = "0.3.103 -> 0.3.104"
 notes = "Wasm task run() drop guard avoids leaking on panic or JS exception; JsNullable upcast impls. Unsafe count unchanged."
+
+[[audits.js-sys]]
+who = "Nautech Systems <info@nautechsystems.io>"
+criteria = "safe-to-deploy"
+delta = "0.3.104 -> 0.3.105"
+notes = "Adds internal experimental JSPI machinery with a RawWaker vtable and Rc task pointers (unsafe +6, none removed); std feature now enables futures-util/std. No network or build-script changes."
 
 [[audits.ref-cast]]
 who = "Nautech Systems <info@nautechsystems.io>"
@@ -79,6 +103,12 @@ criteria = "safe-to-deploy"
 delta = "3.0.3 -> 3.0.4"
 notes = "ForeignItemFn parsing accepts safe fn signatures. Remaining edits are rustc_ast test-harness updates. Unsafe count unchanged."
 
+[[audits.syn]]
+who = "Nautech Systems <info@nautechsystems.io>"
+criteria = "safe-to-deploy"
+delta = "3.0.4 -> 3.0.5"
+notes = "TokenStream parse errors now carry a span. Remaining edits are rustc_ast test-harness binder structs. No unsafe changes."
+
 [[audits.thiserror]]
 who = "Nautech Systems <info@nautechsystems.io>"
 criteria = "safe-to-deploy"
@@ -103,11 +133,23 @@ criteria = "safe-to-deploy"
 delta = "1.24.0 -> 1.26.0"
 notes = "Adds serde::bytes and ContextV7::with_additional_precision_bits; parse diagnostics use char instead of u8. No unsafe, filesystem, network, or build-script changes."
 
+[[audits.uuid]]
+who = "Nautech Systems <info@nautechsystems.io>"
+criteria = "safe-to-deploy"
+delta = "1.26.0 -> 1.26.1"
+notes = "Seats the v7 counter directly below the version nibble; overflowing Timestamp to SystemTime conversions use checked_add instead of panicking. No new unsafe, filesystem, network, or build-script changes."
+
 [[audits.wasm-bindgen]]
 who = "Nautech Systems <info@nautechsystems.io>"
 criteria = "safe-to-deploy"
 delta = "0.2.126 -> 0.2.127"
 notes = "JsNullable upcast impls and an Emscripten marker section. Unsafe count unchanged."
+
+[[audits.wasm-bindgen]]
+who = "Nautech Systems <info@nautechsystems.io>"
+criteria = "safe-to-deploy"
+delta = "0.2.127 -> 0.2.128"
+notes = "Adds a sealed string marker trait for experimental generic-mono imports and JSPI support (unsafe +2, none removed). No network or build-script changes."
 
 [[audits.wasm-bindgen-macro]]
 who = "Nautech Systems <info@nautechsystems.io>"
@@ -115,11 +157,23 @@ criteria = "safe-to-deploy"
 delta = "0.2.126 -> 0.2.127"
 notes = "Version bump only; no source changes."
 
+[[audits.wasm-bindgen-macro]]
+who = "Nautech Systems <info@nautechsystems.io>"
+criteria = "safe-to-deploy"
+delta = "0.2.127 -> 0.2.128"
+notes = "Version bump, UI test-harness docs, and a derive test attribute. No source or unsafe changes."
+
 [[audits.wasm-bindgen-macro-support]]
 who = "Nautech Systems <info@nautechsystems.io>"
 criteria = "safe-to-deploy"
 delta = "0.2.126 -> 0.2.127"
 notes = "Generated upcasts include JsNullable; transmute_copy paths qualify core through wasm_bindgen::__rt. Unsafe count unchanged."
+
+[[audits.wasm-bindgen-macro-support]]
+who = "Nautech Systems <info@nautechsystems.io>"
+criteria = "safe-to-deploy"
+delta = "0.2.127 -> 0.2.128"
+notes = "Moves to syn 3 and adds suspending, jspi, and generic-per-mono codegen fields; unsafe +15/-2 confined to generated-code paths. No network or build-script changes."
 
 [[audits.wasm-bindgen-shared]]
 who = "Nautech Systems <info@nautechsystems.io>"
@@ -127,14 +181,32 @@ criteria = "safe-to-deploy"
 delta = "0.2.126 -> 0.2.127"
 notes = "Version bump only; no source changes."
 
+[[audits.wasm-bindgen-shared]]
+who = "Nautech Systems <info@nautechsystems.io>"
+criteria = "safe-to-deploy"
+delta = "0.2.127 -> 0.2.128"
+notes = "Hashes lib.rs and tys.rs into SCHEMA_FILE_HASH so descriptor opcode renumbering trips the schema version test. No unsafe changes."
+
 [[audits.zerocopy]]
 who = "Nautech Systems <info@nautechsystems.io>"
 criteria = "safe-to-run"
 delta = "0.8.55 -> 0.8.56"
 notes = "Stops pulling alloc under kani cfg. Unsafe count unchanged."
 
+[[audits.zerocopy]]
+who = "Nautech Systems <info@nautechsystems.io>"
+criteria = "safe-to-run"
+delta = "0.8.56 -> 0.8.57"
+notes = "Test-target metadata only; unsafe count decreases by four. No network or build-script changes."
+
 [[audits.zerocopy-derive]]
 who = "Nautech Systems <info@nautechsystems.io>"
 criteria = "safe-to-run"
 delta = "0.8.55 -> 0.8.56"
 notes = "zerocopy(crate = ...) accepts module paths with validation. Test hygiene coverage expanded. No new unsafe."
+
+[[audits.zerocopy-derive]]
+who = "Nautech Systems <info@nautechsystems.io>"
+criteria = "safe-to-run"
+delta = "0.8.56 -> 0.8.57"
+notes = "Generated code qualifies pointer_to_metadata through KnownLayout; test hygiene checks expanded. No unsafe changes."
